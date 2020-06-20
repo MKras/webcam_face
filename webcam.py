@@ -50,7 +50,7 @@ while(True):
     # get it into the correct format
     small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
     rgb_small_frame = small_frame[:, :, ::-1]
-    face_landmarks_list = face_recognition.face_landmarks(rgb_small_frame)
+    # face_landmarks_list = face_recognition.face_landmarks(rgb_small_frame)
 
     # print ("ret '{}' ftame '{}'".format(ret, frame))
     # Our operations on the frame come here
@@ -66,6 +66,11 @@ while(True):
 
         
         cropped = frame[y: y+h, x: x+w]
+
+        small_cropped = cv2.resize(cropped, (0, 0), fx=0.25, fy=0.25)
+        rgb_small_cropped = small_cropped[:, :, ::-1]
+        # face_landmarks_list = face_recognition.face_landmarks(rgb_small_cropped)
+
         # cv2.imshow("Show Boxes", cropped)
         # rgb_cropped = cropped[:, :, ::-1]
         gray_cropped = cv2.cvtColor(cropped, cv2.COLOR_BGR2GRAY)
@@ -80,7 +85,7 @@ while(True):
         # face_image = face_recognition.load_image_file("images/face_webcam.jpg")
         # face_image = face_recognition.load_image_file("images/mikhail_krasikau.png")
         # face_image = face_recognition.load_image_file("images/mkras_tall.jpg")
-        face_image = rgb_small_frame #gray_cropped
+        face_image = rgb_small_frame #rgb_small_cropped #gray_cropped
 
         cv2.imshow("face image", face_image)
 
