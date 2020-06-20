@@ -30,7 +30,11 @@ face_rec_model_path = './data/dlib_face_recognition_resnet_model_v1.dat'
 # sp = dlib.shape_predictor(predictor_path)
 # facerec = dlib.face_recognition_model_v1(face_rec_model_path)
 
-mkras_image = face_recognition.load_image_file("images/mikhail_krasikau.png")
+#sample_image_path = "images/mikhail_krasikau.png"
+sample_image_path = "images/mkras_tall.jpg"
+# sample_image_path = "images/bruce_willis.jpg"
+mkras_image = face_recognition.load_image_file(sample_image_path)
+# mkras_image = face_recognition.load_image_file("images/mkras_webcam.jpg")
 mkras_encoding = face_recognition.face_encodings(mkras_image)[0]
 
 known_face_encodings = [
@@ -63,31 +67,37 @@ while(True):
     # Draw the rectangle around each face
     for (x, y, w, h) in faces:
         cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
-
         
         cropped = frame[y: y+h, x: x+w]
+        rgb_cropped = cropped[:, :, ::-1]
+        # rgb_cropped = cv2.flip(rgb_cropped, 1)
 
-        small_cropped = cv2.resize(cropped, (0, 0), fx=0.25, fy=0.25)
-        rgb_small_cropped = small_cropped[:, :, ::-1]
+        # small_cropped = cv2.resize(cropped, (0, 0), fx=0.25, fy=0.25)
+        # rgb_small_cropped = small_cropped[:, :, ::-1]
+
         # face_landmarks_list = face_recognition.face_landmarks(rgb_small_cropped)
 
         # cv2.imshow("Show Boxes", cropped)
         # rgb_cropped = cropped[:, :, ::-1]
-        gray_cropped = cv2.cvtColor(cropped, cv2.COLOR_BGR2GRAY)
+        # gray_cropped = cv2.cvtColor(cropped, cv2.COLOR_BGR2GRAY)
         # gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-        gray_cropped = cv2.resize(gray_cropped,(0,0),fx=0.5,fy=0.5)
+        # gray_cropped = cv2.resize(gray_cropped,(0,0),fx=0.5,fy=0.5)
 
-        # rgb_frame = frame[:, :, ::-1]
+        rgb_frame = frame[:, :, ::-1]
         # dirty hack - save image to disk and load it
         # cv2.imwrite('images/face_webcam.jpg', rgb_cropped)
+        # cv2.imwrite('images/mkras_webcam.jpg', rgb_frame)
         # cv2.imwrite('images/face_webcam.jpg', rgb_frame)
         # face_image = face_recognition.load_image_file("images/face_webcam.jpg")
         # face_image = face_recognition.load_image_file("images/mikhail_krasikau.png")
         # face_image = face_recognition.load_image_file("images/mkras_tall.jpg")
-        face_image = rgb_small_frame #rgb_small_cropped #gray_cropped
+        face_image = rgb_cropped #rgb_small_frame #rgb_small_cropped #gray_cropped
 
         cv2.imshow("face image", face_image)
+
+        face_sample = cv2.imread(sample_image_path)
+        cv2.imshow("face sample", face_sample)
 
         face_encoding_list = face_recognition.face_encodings(face_image)
 
@@ -100,15 +110,17 @@ while(True):
         
         if bbreak: break
 
-        # comtinue
+        # continue
         face_encoding = face_encoding_list[0]
 
         # face_encoding = face_recognition.face_encodings(rgb_cropped)[0]
         # print ("face_encoding {}".format(face_encoding))
         # See if the face is a match for the known face(s)
+        face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
+        print ("face distances: {}".format(face_distances))
         matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
         if matches == True:
-          print ("Match")
+          print ("!!!!!Match")
         else:
           print ("Not Match")
         
