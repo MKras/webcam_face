@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 2.8)
+#cmake_minimum_required(VERSION 3.1)
+project( webcam )
+find_package( OpenCV REQUIRED )
+add_executable( webcam webcam.cpp )
+message( "OpenCV_LIBS: ${OpenCV_LIBS}" )
+target_link_libraries( webcam ${OpenCV_LIBS} )
