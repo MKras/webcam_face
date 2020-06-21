@@ -68,11 +68,11 @@ def main():
                     face_name = name            
             # print ("{} face distance {}".format(face_name, min_face_distances))
 
-            # Display
-            font = cv2.FONT_HERSHEY_SIMPLEX #cv2.FONT_HERSHEY_DUPLEX
-            if face_name != "" :
-                cv2.putText(frame, "{} - {}".format(face_name, min_face_distances), (x + 6, y - 6), font, 0.5, (255, 255, 255), 1)
-            cv2.imshow('face detector', frame)
+        # Display
+        font = cv2.FONT_HERSHEY_SIMPLEX #cv2.FONT_HERSHEY_DUPLEX
+        if face_name != "" and min_face_distances < 1:
+            cv2.putText(frame, "{} - {}".format(face_name, min_face_distances), (x + 6, y - 6), font, 0.5, (255, 255, 255), 1)
+        cv2.imshow('face detector', frame)
 
         
         if cv2.waitKey(1) & 0xFF == ord('q'):
