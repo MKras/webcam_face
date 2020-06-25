@@ -31,9 +31,10 @@ def main():
     
     known_face_encodings_map = prepare_data()
 
-    # print (len(known_face_encodings))
-    face_name = ""
     while(True):
+        # Here we store data about recognized faces
+        recognized_faces = {}
+
         # Capture frame-by-frame
         ret, frame = cap.read()
 
@@ -42,6 +43,7 @@ def main():
 
         # Detect the faces
         min_face_distances = 1
+        min_face_distances_name = ""
         faces = face_cascade.detectMultiScale(rgb_frame)
         for (x, y, w, h) in faces:
             cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
@@ -54,31 +56,39 @@ def main():
             # cv2.imshow("face image", face_image)
             face_encoding_list = face_recognition.face_encodings(face_image)
 
-            if len(face_encoding_list) < 1: break 
+            if len(face_encoding_list) < 1:
+                # print ("No face recognized")
+                break
 
             # continue
             face_encoding = face_encoding_list[0]
+            # print ("len (face_encoding) = {}".format(len (face_encoding)))
 
             min_face_distances = 1
-            
             for name, face in known_face_encodings_map.items():
                 face_distances = face_recognition.face_distance([face], face_encoding)
                 if min_face_distances > face_distances:
                     min_face_distances = face_distances
-                    face_name = name            
-            # print ("{} face distance {}".format(face_name, min_face_distances))
+                    min_face_distances_name = name
+
+            recognized_faces[min_face_distances_name] = {'distance':min_face_distances, 'coords':(x, y, w, h)}
+            # print(recognized_faces)
 
         # Display
         font = cv2.FONT_HERSHEY_SIMPLEX #cv2.FONT_HERSHEY_DUPLEX
-        if face_name != "" and min_face_distances < 1:
-            cv2.putText(frame, "{} - {}".format(face_name, min_face_distances), (x + 6, y - 6), font, 0.5, (255, 255, 255), 1)
+        for name, data in recognized_faces.items():
+            distance = data['distance']
+            # print ("name '{}' distance '{}'".format(name, distance))
+            if name != "" and distance < 1:
+                (x, y, w, h) = data['coords']
+                cv2.putText(frame, "{} - {}".format(name, distance), (x + 6, y - 6), font, 0.5, (255, 255, 255), 1)
         cv2.imshow('face detector', frame)
 
         
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
-        time.sleep(0.25)
+        time.sleep(0.1)
 
     # When everything done, release the capture
     cap.release()
